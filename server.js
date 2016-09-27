@@ -15,9 +15,19 @@ server.route({
 
 server.route({
     method: 'GET',
-    path: '/{name}',
+    path: '/heloo/{name}',
     handler: function (request, reply) {
+
         reply('Hello, ' + encodeURIComponent(request.params.name) + '!');
+    }
+});
+// optional parameter
+server.route({
+    method: 'GET',
+    path: '/hello/{user?}',
+    handler: function (request, reply) {
+        const user = request.params.user ? encodeURIComponent(request.params.user) : 'stranger';
+        reply('Hello ' + user + '!');
     }
 });
 server.start((err) => {
