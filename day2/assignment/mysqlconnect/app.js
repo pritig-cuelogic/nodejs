@@ -30,10 +30,12 @@ server.route({
 });
 
 server.route({
-    method: 'GET',
+    method: 'POST',
     path: '/insertdata',
     handler: function (request, reply) {
-    	var userdata = { name: 'ritu', email: 'ritu@gmail.com', mobno: 8234567890 };
+    	
+    	var userdata = { name: request.payload.name, email: request.payload.email, mobno: request.payload.mobno};
+
     	conn.query('insert into user set ?',userdata,function(err,rows){
 	  if(err) throw err;
 	  reply("data inserted last id :"+rows.insertId);
@@ -46,11 +48,14 @@ server.route({
 });
 
 server.route({
-    method: 'GET',
+    method: 'PUT',
     path: '/updatedata/{id}',
     handler: function (request, reply) {
     	
-    	conn.query('update user set name = ? where id = ? ',['nimmy',encodeURIComponent(request.params.id)],function(err,rows){
+    	var userdata = {name: request.payload.name,email: request.payload.email, mobno: request.payload.mobno};
+    	//console.log(userdata);
+    	//console.log(encodeURIComponent(request.params.id));
+    	conn.query('update user set name = ?,email = ?, mobno=? where id = ? ',[userdata.name,userdata.email,userdata.mobno,encodeURIComponent(request.params.id)],function(err,rows){
 	  if(err) throw err;
 	  reply(rows.changedRows +"data updated   :");
 	  console.log(rows.changedRows +'data updated with id  :');
@@ -62,11 +67,11 @@ server.route({
 });
 
 server.route({
-    method: 'GET',
+    method: 'DELETE',
     path: '/deletedata/{id}',
     handler: function (request, reply) {
     	
-    	conn.query('delete from user where id = ? ',[encodeURIComponent(request.params.id)],function(err,rows){
+    	conn.query('delete from user where id = ? ',[request.params.id],function(err,rows){
 	  if(err) throw err;
 	  reply("deleted rows  :"+rows.affectedRows);
 	  console.log('deleted rows :', rows.affectedRows);
