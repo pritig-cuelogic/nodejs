@@ -1,7 +1,10 @@
 'use strict';
 var connection      = require('./connection');
+
+
 var conn = connection.con;
 const Hapi = require('hapi');
+var Joi = require('joi');
 
 const server = new Hapi.Server();
 server.connection({ port: 3000 });
@@ -36,14 +39,25 @@ server.route({
     	
     	var userdata = { name: request.payload.name, email: request.payload.email, mobno: request.payload.mobno};
 
+       
+        
     	conn.query('insert into user set ?',userdata,function(err,rows){
 	  if(err) throw err;
 	  reply("data inserted last id :"+rows.insertId);
 	  console.log('Last insert ID:', rows.insertId);
 	  
 	});
-     
+    
         
+    },
+    config: {
+        validate: {
+            payload: {
+                name: Joi.string().required(),
+                email: Joi.string().email().required(),
+                mobno: Joi.number().integer().required()
+            }
+        }
     }
 });
 
@@ -63,6 +77,18 @@ server.route({
 	});
      
         
+    },
+    config: {
+        validate: {
+            params: {
+                id: Joi.number().integer().required()
+            },
+            payload: {
+                name: Joi.string(),
+                email: Joi.string().email(),
+                mobno: Joi.number().integer()
+            }
+        }
     }
 });
 
