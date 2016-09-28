@@ -105,6 +105,13 @@ server.route({
 	});
      
         
+    },
+    config: {
+        validate: {
+            params: {
+                id: Joi.number().integer().required()
+            }
+        }
     }
 });
 
