@@ -19,9 +19,10 @@ server.route({
     method: 'GET',
     path: '/getdata',
     handler: function (request, reply) {
-       var result = db.fetchAllData();
-       // console.log(result.RowDataPacket);
-
+      
+      db.fetchAllData().then(function(rows){
+          reply(rows);
+       });
     }
 });
 
