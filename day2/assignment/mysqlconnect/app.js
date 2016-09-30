@@ -1,6 +1,6 @@
 'use strict';
 var db      = require('./dboperation');
-var crypt   = require('crypto');
+var jwt   = require('jsonwebtoken');
 
 const Hapi = require('hapi');
 var Joi = require('joi');
@@ -36,14 +36,14 @@ server.route({
         db.checkValiduser(request.payload.email,request.payload.password).then(function(rows){
          
          //reply(rows[0].id);
-         generateToken().then(function(token){
+         var token = generateToken(rows[0].id);
             db.updateToken(1,token,rows[0].id).then(function(rows){
                 reply({token : token});
             })
             .catch(function(err){
             reply(err);
             });
-         });
+         
        })
        .catch(function(err){
             reply(err);
@@ -99,13 +99,22 @@ server.route({
     	
          db.checkloggedinUser(request.headers.authtoken).then(function(rows){
             if(rows.length >=1){
-            
-                var userdata = {name: request.payload.name,email: request.payload.email, mobno: request.payload.mobno};
+                var userdata = {};
+                if(request.payload.name != null){
+                    userdata['name'] = request.payload.name;
+                }
+                if(request.payload.email != null){
+                    userdata['email'] = request.payload.email;
+                }
+                if(request.payload.mobno != null){
+                    userdata['mobno'] = request.payload.mobno;
+                }
                 var id1 = encodeURIComponent(request.params.id);
                 db.updateUser(userdata,id1).then(function(rows){
                   reply(rows.changedRows +"data updated   :");
-               });
-           
+               }).catch(function(err){
+            reply("Error :"+err);
+       });
         }
             else{
                reply("Please Logged in.");
@@ -348,16 +357,7 @@ server.start((err) => {
 
 // generate random token
 
-var generateToken = function(){
-    return new Promise(function(resolve,reject){
-    crypt.randomBytes(20, function(err, buffer) {
-    var token = buffer.toString('hex');
-    if(err){             
-            return reject(err);
-        }else{ 
-                  
-            return resolve(token);
-        }
-    });
-    }) ;
-}
+function generateToken(userid){
+    var token =   jwt.sign(userid, 'testapipriti');
+    return token;
+} 

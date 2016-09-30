@@ -36,7 +36,15 @@ module.exports.addUser = function(userdata){
 
 module.exports.updateUser = function(userdata,id){
 	return new Promise(function(resolve,reject){
-    conn.query('update user set name = ?,email = ?, mobno=? where id = ? ',[userdata.name,userdata.email,userdata.mobno,id],function(err,rows){
+	var q1 = 'update user set ';
+	for(var key in userdata){
+		q1 += ''+key+' = "'+userdata[key]+'",';
+	}
+	q1 = q1.replace(/,\s*$/, "");
+	q1 += ' where id='+id+'';
+	//console.log(q1);
+	//return resolve(q1);
+    conn.query(q1,function(err,rows){
 
         if(err){                
             return reject(err);
