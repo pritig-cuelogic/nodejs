@@ -1,5 +1,5 @@
 
-var Promise = require("promise");
+var Promise = require("bluebird");
 var connection      = require('./connection');
 
 var conn = connection.con;
