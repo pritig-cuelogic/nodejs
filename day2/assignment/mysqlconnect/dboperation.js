@@ -4,6 +4,7 @@ var connection      = require('./connection');
 
 var conn = connection.con;
 
+module.exports.promiseobj = Promise;
 module.exports.fetchAllUsers = function(){
 	return new Promise(function(resolve,reject){
     conn.query("select * from user",function(err,rows,fields){

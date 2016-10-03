@@ -5,7 +5,6 @@ var jwt   = require('jsonwebtoken');
 const Hapi = require('hapi');
 var Joi = require('joi');
 
-
 const server = new Hapi.Server();
 server.connection({ port: 3000 });
 
@@ -231,9 +230,6 @@ server.route({
                     db.fetchAllFriend(rows[0].user_id).then(function(rows){
                         reply(rows);
                     })
-                    .catch(function(err){
-                        reply(err);
-                        });
                 }
                 else{
                    reply("Please Logged in."); 
