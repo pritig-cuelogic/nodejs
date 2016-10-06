@@ -98,5 +98,4 @@ server.start((err) => {
 });
 
 // generate random token
- });
-
+});
